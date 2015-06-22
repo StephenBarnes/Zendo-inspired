@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Zendo-like game. Uses fuzzy_rules.py to construct random rules (word classifiers), then allows
+# the user to test the rule or guess how it classifies words.
+
 from random import choice, shuffle, randint
 import re
 from math import log
@@ -15,9 +18,6 @@ NUM_TESTS = lambda d: 4 + d
 NUM_STARTING_EXAMPLES = lambda d: (1 if d == 1 else 2)
     # Number of examples of accepted and rejected (each) to show.
     # This is a function of difficulty.
-    # Generally, this shouldn't exceed:
-    # r.TRAINING_POINTS_PER_CLASS(d) * r.SENSITIVITY_SPECIFICITY_MINIMUM(d)
-    #TODO: extend to find more examples, so this is no longer a problem
 
 
 # Global variables
@@ -32,13 +32,14 @@ positive_examples, negative_examples = [], []
 # The actual game
 ########################################################################
 
-difficulty = int(input("Enter difficulty, which is number of features (1 is easy, 3 is moderate, 5 is difficult): "))
+difficulty = int(input("Enter difficulty (1 is easy, 3 is moderate, 5 is difficult): "))
 print("Generating rule...")
 rule = r.random_rule(difficulty)
 print("Generated rule.\n")
 
-
 def ensure_minimum_examples(num):
+    """Ensure that each of positive_examples and negative_examples contain at least
+    `num` elements."""
     global positive_examples
     global negative_examples
     positive_examples = list(filter(lambda w: w not in known_words, positive_examples))
@@ -59,11 +60,9 @@ print("You are given that these string(s) are rejected: ",
 for word in negative_examples[:num_starting_examples]:
     known_words[word] = False
 
-
 def test_user_GOTIT():
     """Test the user after he claims GOTIT.
-    Returns the user's log score.
-    """
+    Returns the user's log score."""
 
     num_tests = NUM_TESTS(difficulty)
     print("\nYou will be asked to judge %s strings. For each one, enter your belief that the string" % num_tests)
