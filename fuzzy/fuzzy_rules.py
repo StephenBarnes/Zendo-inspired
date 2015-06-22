@@ -2,7 +2,9 @@
 
 from string import ascii_lowercase
 from random import choice, shuffle, random
+from os import path
 from sklearn.svm import SVC
+
 
 # Configuration
 ########################################################################
@@ -24,12 +26,19 @@ TEST = True # Whether to run various checks and assertions
 # Constants and globals
 ########################################################################
 
+# Requires file 'words.txt', each of whose lines should be exactly one word consisting of only lowercase letters.
+# (Creatable by taking a standard dictionary and doing: :%v/^[a-z]*/d )
+WORDS_PATH = path.join(path.dirname(path.realpath(__file__)), "..", "words.txt")
+ALL_WORDS = open(WORDS_PATH, "r").read().splitlines()
+
 VOWELS = set("aeiou" + choice(["", "y"])) # some rules will consider y to be a vowel!
 CONSONANTS = set(ascii_lowercase) - VOWELS
 
-ALL_WORDS = open("words.txt", "r").read().splitlines()
-
 FEATURES = [] # list of Feature objects
+
+
+# Create features
+########################################################################
 
 class Feature(object):
     def __init__(self, name, probability_weight, function):
@@ -46,10 +55,6 @@ class Feature(object):
         return self.function(s)
     def __str__(self):
         return self.name
-
-
-# Now we create our features
-########################################################################
 
 # Create a string-length feature
 FEATURES.append(Feature("length", 50, len))
@@ -85,10 +90,11 @@ for char in ascii_lowercase:
         assert .49 < FEATURES[-1](("X" + char) * 13) < .51
 
 
-# Done creating features, will now write tools
+# Rules and related utilities
 ########################################################################
 
 class BadRuleException(Exception):
+    """Raised when a Rule is unreasonable, or we can't generate any reasonable rules."""
     pass
 
 class Rule(object):
@@ -197,6 +203,8 @@ def random_rule(difficulty):
     raise Exception("could not generate random rule: every one of the NUM_RANDOM_RULE_TRIES tries failed")
 
 def test_random_words(rule, num_words):
+    """Test `num_words` random words with the given `rule`, and return those accepted
+    and rejected in separate lists."""
     words_copy = ALL_WORDS[:]
     shuffle(words_copy)
     word_sample = words_copy[:num_words]

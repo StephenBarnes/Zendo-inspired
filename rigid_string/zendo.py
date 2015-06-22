@@ -71,6 +71,7 @@ def main_game_loop():
     Returns True if another round is needed, False otherwise."""
     command = input("\nEnter lowercase string to test, or GIVEUP to give up, or GOTIT if you "
             "think you know the rule.\n> ").rstrip('\n')
+    global num_asks
     if command == "GIVEUP":
         print("\nThe rule was:  ", str(rule))
         return False
@@ -82,7 +83,6 @@ def main_game_loop():
 
         print("\nThe rule was:  ", str(rule))
 
-        global num_asks
         print("\nDifficulty was %s and you tested %s words." % (difficulty, num_asks))
         print("Known classifications at the time you typed GOTIT were:")
         for k, v in known_words.items():
@@ -95,7 +95,6 @@ def main_game_loop():
             accepted = rule(command)
             known_words[command] = accepted
             print("String %r is:  %s" % (command, ("ACCEPTED" if accepted else "REJECTED")))
-            global num_asks
             num_asks += 1
         return True
 

@@ -2,21 +2,29 @@
 
 from random import choice, randint, shuffle, random
 import string
-
-STRINGS_GENERALLY_LONGER_THAN = 4
-STRINGS_GENERALLY_SHORTER_THAN = 10
+from os import path
 
 
-# Requires file 'words.txt', each of whose lines should be exactly one word consisting of only lowercase letters.
-# (Creatable by taking a standard dictionary and doing: :%v/^[a-z]*/d )
+# Configuration
+########################################################################
 
-ALL_WORDS = open("words.txt", "r").read().splitlines()
 REASONABILITY_SAMPLE_SIZE = 1000 # number of words to test when determining whether a rule is reasonable
 REASONABILITY_MIN_ACCEPT = 10 # minimum number of words a rule must accept to be "reasonable", out of sample
 REASONABILITY_MIN_REJECT = 10 # minimum number of words a rule must reject to be "reasonable", out of sample
 
 NUM_TRIES = 100 # number of times to try generating various rules randomly before giving up
 
+STRINGS_GENERALLY_LONGER_THAN = 4
+STRINGS_GENERALLY_SHORTER_THAN = 10
+
+
+# Constants and globals
+########################################################################
+
+# Requires file 'words.txt', each of whose lines should be exactly one word consisting of only lowercase letters.
+# (Creatable by taking a standard dictionary and doing: :%v/^[a-z]*/d )
+WORDS_PATH = path.join(path.dirname(path.realpath(__file__)), "..", "words.txt")
+ALL_WORDS = open(WORDS_PATH, "r").read().splitlines()
 
 concrete_rules = []
 def register_concrete_rule(cls):
@@ -26,6 +34,9 @@ def register_concrete_rule(cls):
     concrete_rules.append(cls)
     return cls
 
+
+# Rule classes etc.
+########################################################################
 
 class IncorrectComplexity(Exception):
     """Raised when some rule failed to be created because it was given
@@ -115,7 +126,7 @@ def random_rule(complexity, forbidden_classes=None, top_level=False):
         if top_level:
             if try_num == 1:
                 print("\tno good rules found, trying again (may take several tries)...")
-            else:
+            elif (try_num % 5) == 0:
                 print("\ttry %r..." % try_num)
     raise IncorrectComplexity("could not generate legal rule")
 
@@ -135,8 +146,6 @@ class CombinationRule(Rule):
         return "(%s) %s (%s)" % (str(self.test1), self.name, str(self.test2))
     @classmethod
     def get_random(cls, complexity):
-        #NOTE: I could implement here a test to prevent, for instance, a combination
-        # of two LengthMinimumRules, since that makes no sense.
         if complexity < (1 + 1 + cls.combining_complexity):
             raise IncorrectComplexity()
         # combining takes 1 complexity, then the rest is passed to subrules
@@ -160,6 +169,7 @@ class CombinationRule(Rule):
         Has to be a function, not a property, because else we have to change
         ordering of classes."""
         return {LengthMinimumRule: [LengthMinimumRule]
+                    # Because (length >= 2) AND (length >= 3) is equivalent to just length >= 3
                 }
 
 @register_concrete_rule
@@ -167,9 +177,6 @@ class ConjunctionRule(CombinationRule):
     name = "and"
     probability_weight = .2
     combining_complexity = 1
-    def forbidden_classes():
-        return {LengthMinimumRule: [LengthMinimumRule]
-                }
     def combin_func(self, x, y):
         return x and y
 
@@ -178,9 +185,6 @@ class DisjunctionRule(CombinationRule):
     name = "or"
     probability_weight = .2
     combining_complexity = 1
-    def forbidden_classes():
-        return {LengthMinimumRule: [LengthMinimumRule]
-                }
     def combin_func(self, x, y):
         return x or y
 
@@ -191,6 +195,8 @@ class XorRule(CombinationRule):
     probability_weight = .1
     def combin_func(self, x, y):
         return (x or y) and not (x and y)
+    def forbidden_classes():
+        return {}
 
 @register_concrete_rule
 class NegationRule(Rule):
