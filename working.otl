@@ -1,0 +1,15 @@
+
+basic idea for Fuzzy Zendo:
+	randomly pick some words that should be accepted or rejected
+	randomly pick some features from a large feature set
+		number of features is difficulty level
+		examples of features:
+			word length
+			number of vowels, consonants
+			number of occurrences of a given character
+				maybe this requires too much attention to fine details?
+	train a classifier (e.g. linear classifier, or SVC) on those words and those features
+		this is our "rule"; we accept/reject according to classification
+		SVC is probably better than LC because we can have curved boundaries in feature space
+	so you don't try to guess a hard rule, you try to learn fuzzy properties of each class
+
