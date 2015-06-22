@@ -78,3 +78,65 @@ Here's an example of me playing a game of Rigid String Zendo, and being a bit of
 		xxxxxxxxxxx                    : accepted
 		xxxxxx                         : rejected
 
+Example
+-------
+
+Here's an example of me playing a game of Rigid String Zendo, and being a bit of a dumbass:
+
+	> ./rigid_string/zendo.py
+	Enter rule complexity (2 is easy, 4 is moderate, 7 is difficult, 12 is ridiculous): 4
+	Generating rule...
+	Generated rule.
+
+	Example of ACCEPTED string: underwriter
+	Example of REJECTED string: n
+
+
+	Enter lowercase string to test, or GIVEUP to give up, or GOTIT if you think you know the rule.
+	> x
+	String 'x' is:  REJECTED
+
+	Enter lowercase string to test, or GIVEUP to give up, or GOTIT if you think you know the rule.
+	> xxxx
+	String 'xxxx' is:  REJECTED
+
+	Enter lowercase string to test, or GIVEUP to give up, or GOTIT if you think you know the rule.
+	> xxxxxx
+	String 'xxxxxx' is:  REJECTED
+
+	Enter lowercase string to test, or GIVEUP to give up, or GOTIT if you think you know the rule.
+	> xxxxxxxxxxx
+	String 'xxxxxxxxxxx' is:  ACCEPTED
+
+	Enter lowercase string to test, or GIVEUP to give up, or GOTIT if you think you know the rule.
+	> xxxxxxxx
+	String 'xxxxxxxx' is:  ACCEPTED
+
+	Enter lowercase string to test, or GIVEUP to give up, or GOTIT if you think you know the rule.
+	> xxxxxxx
+	String 'xxxxxxx' is:  REJECTED
+
+	Enter lowercase string to test, or GIVEUP to give up, or GOTIT if you think you know the rule.
+	> GOTIT
+	You will be asked to judge 5 strings. Judge all of them correctly (as the rule would)
+	and you win, but get any wrong and you lose.
+
+	Test this word:  unbarred
+	Enter A to accept, or R to reject: R
+	Incorrect! The rule actually ACCEPTS this word.
+
+	You lose :(
+
+	The rule was:   (length at least 8) or (contains 'i')
+
+	Difficulty was 4 and you tested 6 words.
+	Known classifications at the time you typed GOTIT were:
+		xxxxxxx                        : rejected
+		x                              : rejected
+		xxxx                           : rejected
+		xxxxxxxx                       : accepted
+		n                              : rejected
+		underwriter                    : accepted
+		xxxxxxxxxxx                    : accepted
+		xxxxxx                         : rejected
+
