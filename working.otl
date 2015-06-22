@@ -1,0 +1,48 @@
+
+rules to implement maybe:
+	word contains at least N vowels
+	word contains at least N consonants
+	word contains at least N more consonants than vowels (where N is, say, randint(-3, 3))
+	word's length is a multiple of 2, or of 3 (which also gives "NOT a multiple of 2, 3" compound rule)
+
+random ideas:
+
+	Statistical Zendo: have *probabilistic* rules
+		ie rules output a categorical distribution over {accept, reject} which the user then gets a sample of
+		then allow the user to say "run 10 trials of the previous test" and get output summary
+		then the user gets n tests, and his score is the Bayes score of his predictions
+
+	Fuzzy Zendo:
+		get a random-weighted classifier (e.g. linear model, or SVC) on words, given various features
+			then accept/reject according to classification
+		prune the feature set down to n features, where n is the difficulty
+		so you don't try to guess a hard rule, you try to learn fuzzy properties of each class
+
+	Function Zendo:
+		the "rule" is a real-valued or integer-valued function of words
+		seems like it would require too much mental math to be fun
+
+	Boolean Function Zendo:
+		you are given some boolean-valued functions a, b, etc. of multiple boolean values
+			valences are given
+		you can ask for the result of eg "a 1 (b 0 1)"
+		this won't work because you can just ask for each function's entire truth table,
+			AND it generally won't be possible to do it in fewer asks than that, I think
+
+	maybe instead of strings, use numbers?
+		Con: Numbers are less interesting than strings.
+		Will numbers actually be easier to generate examples and counterexamples for?
+			we can eg keep the entire range 1..1000, then sieve it
+				and discard rules that disobey all 
+
+	maybe instead of strings or numbers, use 3-number sequences
+		like the classic 2-4-6 example of positive bias
+		is a sieve feasible? Eg each in range 1..100 means we need to keep a sieve of 10^6 entries
+			but it's probably not feasible to keep a list of all rules' legal sequences, right?
+		maybe even limit the range to 1..10, so the sequence space size is 1000
+			then if we have 10^6 rules, we need 10^9 space to store all sequence sets
+
+	idea: maybe keep a list of ALL rules, then you can produce "differentiating cases" to quiz the person on
+		to see if they really did get the right rule, or if they failed
+		but this requires too much of a knowledge of the rule space, I think
+

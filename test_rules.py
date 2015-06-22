@@ -19,6 +19,22 @@ class TestContainment(unittest.TestCase):
         self.assertFalse(rule("Xoo"))
         self.assertFalse(rule("x" * 100))
 
+class TestPrefix(unittest.TestCase):
+    def test_call(self):
+        rule = r.PrefixRule("xo")
+        self.assertTrue(rule("xoxo"))
+        self.assertFalse(rule("oxoooooooooooo"))
+        self.assertFalse(rule(""))
+        self.assertFalse(rule("ox"))
+
+class TestSuffix(unittest.TestCase):
+    def test_call(self):
+        rule = r.SuffixRule("xo")
+        self.assertTrue(rule("ooxo"))
+        self.assertFalse(rule("oxoooooooooooo"))
+        self.assertFalse(rule(""))
+        self.assertFalse(rule("xooo"))
+
 class TestConjunction(unittest.TestCase):
     def test_call(self):
         rule = r.ConjunctionRule(r.ContainmentRule("x"), r.ContainmentRule("he"))
@@ -53,13 +69,6 @@ class TestLengthMin(unittest.TestCase):
         self.assertFalse(rule(""))
         self.assertFalse(rule("o" * 4))
 
-class TestLengthMax(unittest.TestCase):
-    def test_call(self):
-        rule = r.LengthMaximumRule(5)
-        self.assertTrue(rule("12345"))
-        self.assertFalse(rule("o" * 10))
-        self.assertTrue(rule(""))
-        self.assertTrue(rule("o" * 4))
 
 if __name__ == "__main__":
 	unittest.main()
