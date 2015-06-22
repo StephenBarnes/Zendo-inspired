@@ -1,4 +1,8 @@
 
+features to implement:
+	save everything the user does in a pickled GameLog object
+		so users can track their statistics, ie whether they're getting better
+
 rules to implement maybe:
 	word contains at least N vowels
 	word contains at least N consonants

@@ -65,7 +65,7 @@ def test_user_GOTIT():
 # Main game loop
 while True:
     command = input("\nEnter lowercase string to test, or GIVEUP to give up, or GOTIT if you "
-            "think you know the rule.\n> ").strip()
+            "think you know the rule.\n> ").rstrip('\n')
     if command == "GIVEUP":
         print("\nThe rule was:  ", str(rule))
         break
