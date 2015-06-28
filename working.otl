@@ -8,6 +8,10 @@ rules to implement maybe:
 	word contains at least N consonants
 	word contains at least N more consonants than vowels (where N is, say, randint(-3, 3))
 	word's length is a multiple of 2, or of 3 (which also gives "NOT a multiple of 2, 3" compound rule)
+	word contains (at least) N repetitions of any letter/substring (e.g. "hoot", "see" both satisfiy 2 rep)
+	word contains substring with wilds (e.g. "sit", "sat" both satisfy "s_t", but "seat" does not)
+	word contains non-consecutive letter sequence (e.g. "tab", "tarb" both satisfy *a*b*)
+	word contains at least N unique characters
 
 random ideas:
 
@@ -49,4 +53,14 @@ random ideas:
 	idea: maybe keep a list of ALL rules, then you can produce "differentiating cases" to quiz the person on
 		to see if they really did get the right rule, or if they failed
 		but this requires too much of a knowledge of the rule space, I think
-
+	
+	regex:
+	    define search criteria in regex and ask the user to identify the exact
+	    regex expression used
+	        but this grading system restricts the user base to only those who know regex
+	    
+    refine complexity:
+        addition of subrules should be tested by the proportion of samples which change with the addition
+            e.g. ((contains "a") OR (contains "ab"))
+            should be forbidden because the second subrule is redundant to the first
+            no samples will be found for which change their result changes
