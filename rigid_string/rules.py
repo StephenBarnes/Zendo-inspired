@@ -191,8 +191,8 @@ class DisjunctionRule(CombinationRule):
 @register_concrete_rule
 class XorRule(CombinationRule):
     name = "xor"
-    combining_complexity = 2
     probability_weight = .1
+    combining_complexity = 2
     def combin_func(self, x, y):
         return (x or y) and not (x and y)
     def forbidden_classes():
