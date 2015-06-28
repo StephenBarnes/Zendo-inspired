@@ -69,6 +69,31 @@ class TestLengthMin(unittest.TestCase):
         self.assertFalse(rule(""))
         self.assertFalse(rule("o" * 4))
 
+class TestVowelCount(unittest.TestCase):
+    def test_call(self):
+        rule = r.VowelCount(4)
+        self.assertTrue(rule("abefijuv"))
+        self.assertTrue(rule("o" * 10))
+        self.assertFalse(rule(""))
+        self.assertFalse(rule("x" * 10))
+
+class TestConsonantCount(unittest.TestCase):
+    def test_call(self):
+        rule = r.ConsonantCount(4)
+        self.assertTrue(rule("abefijuv"))
+        self.assertTrue(rule("x" * 10))
+        self.assertFalse(rule(""))
+        self.assertFalse(rule("o" * 10))
+
+class TestUniqueCount(unittest.TestCase):
+    def test_call(self):
+        rule = r.UniqueCount(4)
+        self.assertTrue(rule("abefijuv"))
+        self.assertTrue(rule("abcd"))
+        self.assertFalse(rule("x" * 10))
+        self.assertFalse(rule(""))
+        self.assertFalse(rule("o" * 10))
+
 
 if __name__ == "__main__":
 	unittest.main()

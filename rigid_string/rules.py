@@ -2,6 +2,7 @@
 
 from random import choice, randint, shuffle, random
 import string
+import math
 from os import path
 
 
@@ -165,11 +166,14 @@ class CombinationRule(Rule):
         raise IncorrectComplexity()
     def forbidden_classes():
         """Returns a dict mapping from the class of the left subtree to a list
-        of classe the right subtree can't have.
+        of classes the right subtree can't have.
         Has to be a function, not a property, because else we have to change
         ordering of classes."""
-        return {LengthMinimumRule: [LengthMinimumRule]
-                    # Because (length >= 2) AND (length >= 3) is equivalent to just length >= 3
+        return {LengthMinimumRule: [LengthMinimumRule],
+                    # Because (length >= 2) AND (length >= 3) is equivalent to just length >=3
+                VowelCount: [VowelCount],
+                ConsonantCount: [ConsonantCount],
+                UniqueCount: [UniqueCount]
                 }
 
 @register_concrete_rule
@@ -191,8 +195,8 @@ class DisjunctionRule(CombinationRule):
 @register_concrete_rule
 class XorRule(CombinationRule):
     name = "xor"
-    combining_complexity = 2
     probability_weight = .1
+    combining_complexity = 2
     def combin_func(self, x, y):
         return (x or y) and not (x and y)
     def forbidden_classes():
@@ -298,6 +302,65 @@ class SuffixRule(SubstringRule):
         return s.endswith(self.substr)
     def __str__(self):
         return "ends with %r" % self.substr
+
+
+class CharacterCountRule(Rule):
+    """Abstract base for rules which involve counting number
+    of occurances of characters."""
+    probability_weight = .2
+    complexity_cost = 3
+    count_min = math.ceil(0.7 * STRINGS_GENERALLY_LONGER_THAN)
+    count_max = math.ceil(0.5 * (STRINGS_GENERALLY_SHORTER_THAN +
+                                 STRINGS_GENERALLY_LONGER_THAN))
+    def __init__(self, count_target): 
+        self.count_target = count_target
+    def __call__(self, s):
+        raise NotImplementedError("abstract base class")
+    def __str__(self):
+        raise NotImplementedError("abstract base class")
+    @classmethod
+    def get_random(cls, complexity):
+        if not (2 <= complexity <= 3):
+            raise IncorrectComplexity()
+        return cls(randint(cls.count_min, cls.count_max))
+
+def count_vowels(s):
+    vowels = "aeiou"
+    s = s.lower()
+    return sum(letter in vowels for letter in s)
+
+def count_consonants(s):
+    consonants = "bcdfghjklmnpqrstvwxyz"
+    s = s.lower()
+    return sum(letter in consonants for letter in s)
+
+@register_concrete_rule
+class VowelCount(CharacterCountRule):
+    """Rule: String must contain at least N vowels."""
+    probability_weight = .08
+    def __call__(self, s):
+        return count_vowels(s) >= self.count_target
+    def __str__(self):
+        return "contains at least %r vowels" % self.count_target
+
+@register_concrete_rule
+class ConsonantCount(CharacterCountRule):
+    """Rule: String must contain at least N consonants."""
+    probability_weight = .08
+    def __call__(self, s):
+        return count_consonants(s) >= self.count_target
+    def __str__(self):
+        return "contains at least %r consonants" % self.count_target
+
+@register_concrete_rule
+class UniqueCount(CharacterCountRule):
+    """Rule: String must contain at least N unique letters."""
+    probability_weight = .12
+    def __call__(self, s):
+        return len(set(s)) >= self.count_target
+    def __str__(self):
+        return "contains at least %r unique letters" % self.count_target
+
 
 #NOTE maybe implement more rules
 
